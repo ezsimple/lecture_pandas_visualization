@@ -28,7 +28,7 @@ pageNo=1
 numOfRows=31
 startDt='20220701'
 endDt='20220730'
-stnIds=129 # 서산(129), 인천(112),
+stnIds=129 # 서산(129), 인천(112), 서울(108)
 
 # 날짜 유효성 검사 및 Fix
 first_day = datetime.today().strftime('%Y%m01')
@@ -41,7 +41,6 @@ if startDt > yesterday:
 if endDt > yesterday:
   endDt = yesterday
 
-# %%
 url = 'http://apis.data.go.kr/1360000/AsosDalyInfoService/getWthrDataList'
 params ={'serviceKey' : serviceKey, 'pageNo' : pageNo, 'numOfRows' : numOfRows, 'dataType' : 'JSON', 'dataCd' : 'ASOS', 'dateCd' : 'DAY', 'startDt' : startDt, 'endDt' : endDt, 'stnIds' : stnIds  }
 
@@ -57,7 +56,6 @@ try:
 except Exception as e:
   print(e)
 
-# %%
 # minTa: 최저 기온 , maxTa: 최고 기온 , sumRn: 일강수량
 df = pd.DataFrame(item)
 df.set_index('tm', inplace=True) # tm: 일시
