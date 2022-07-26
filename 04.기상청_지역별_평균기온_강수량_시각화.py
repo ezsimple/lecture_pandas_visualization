@@ -28,7 +28,7 @@ pageNo=1
 numOfRows=31
 startDt='20220701'
 endDt='20220730'
-stnIds=129 # 서산(129), 인천(112), 서울(108)
+stnIds=112 # 서산(129), 인천(112), 서울(108)
 
 # 날짜 유효성 검사 및 Fix
 first_day = datetime.today().strftime('%Y%m01')
@@ -109,6 +109,8 @@ for idx, val in enumerate(df['평균 기온']):
   if val >= temp_min and val <= temp_max: # 중간 기온만 출력 (강수량과 겹침 방지)
     ax1.text(idx, val, str(val), ha='center', va='bottom')
 
+ax1.set_xlabel('일자별 날씨정보 (공공 데이터 이용 자료)')
+
 ax2 = ax1.twinx() # x축을 공유하는 축을 생성
 p2 = ax2.bar(df.index, df['일강수량'], color='#0033ff', alpha=0.5, label='일강수량')
 ax2.set_ylabel('일강수량(mm)')
@@ -116,6 +118,8 @@ ax2.legend(loc=(0.05, 0.80))
 for idx, val in enumerate(df['일강수량']):
   if val >= 1.0: # 1mm 이상만 출력
     ax2.text(idx, val+0.05, str(val), ha='center', va='bottom')
+
+
 
 # 그래프 저장
 fig.savefig('data/'+title+'.png', dpi=300)
