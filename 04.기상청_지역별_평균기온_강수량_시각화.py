@@ -9,6 +9,7 @@ import pandas as pd
 import numpy as np
 import seaborn as sns
 import matplotlib as mpl
+import matplotlib.transforms as transforms
 
 # 한글화 작업
 plt.figure(dpi=600) # 그래프를 선명하게
@@ -27,7 +28,7 @@ pageNo=1
 numOfRows=31
 startDt='20220601'
 endDt='20220630'
-stnIds=112 # 서산(129), 인천(112), 서울(108)
+stnIds=112 # 서산(129), 인천(112), 서울(108), 홍천(212)
 
 # 날짜 유효성 검사 및 Fix
 today = datetime.today()
@@ -100,8 +101,8 @@ df['일'] = dt.day
 #     temps.drop(temps[temps == value].index, inplace=True)
 
 mean_temp = df['평균 기온'].mean()
-max_temp = df['최고 기온'].max()
-min_temp = df['최저 기온'].min()
+max_temp = df['평균 기온'].max()
+min_temp = df['평균 기온'].min()
 
 # 중간값중 중복값 제거
 # temps = temps.drop_duplicates()
@@ -122,10 +123,15 @@ ax1.set_ylabel('평균 기온(°C)')
 ax1.set_xticklabels(df['일'], ha='center', rotation=0)
 ax1.legend(loc=(0.05, 0.85))
 for idx, val in enumerate(df['평균 기온']):
-  if val == temp_max: # 중간 기온만 출력 (강수량과 겹침 방지)
+  if val >= max_temp: #
     ax1.text(idx, val, str(val), ha='center', va='bottom')
 
+# 평균 온도를 수평 라인으로 표시
 ax1.axhline(mean_temp, color="red", linestyle=":", linewidth=2, alpha=0.5)
+trans = transforms.blended_transform_factory(ax1.get_yticklabels()[0].get_transform(), ax1.transData)
+ax1.text(0,mean_temp, "{:.1f}".format(mean_temp), color="red", transform=trans, ha="right", va="center")
+
+# 하단에 레이블 표시 (footer)
 ax1.set_xlabel('과거 일자별 날씨정보 (공공 데이터 이용 자료)')
 
 ax2 = ax1.twinx() # x축을 공유하는 축을 생성
