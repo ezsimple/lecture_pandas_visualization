@@ -29,7 +29,7 @@ pageNo=1
 numOfRows=31
 startDt='20220601'
 endDt='20220630'
-stnIds=112 # 서산(129), 인천(112), 서울(108), 홍천(212)
+stnIds=129 # 서산(129), 인천(112), 서울(108), 홍천(212)
 # 당진 <-> 대전(125), 부여(113), 보령(83), 서산(31), 금산(135), 천안(51) km 이내
 
 # 날짜 유효성 검사 및 Fix
@@ -118,13 +118,13 @@ city_name = df_city.loc[stnIds]['name']
 
 # X축을 공유하는 이중 라인 차트 생성
 fig, ax1 = plt.subplots(figsize=(10,6), sharex='col')
-title=f"{city_name} 평균기온 및 일강수량 ({startDt} ~ {endDt})"
+title=f"{city_name} 기온 및 일일 강수량 ({startDt} ~ {endDt})"
 fig.suptitle(title)
-ax1.plot(df.index, df['최고 기온'], color='#ff6600', marker='^', ls=':' ,markersize=10, linewidth=1, markeredgecolor='#ffffff', markeredgewidth=2, label='최고기온')
+ax1.plot(df.index, df['최고 기온'], color='#ff6600', marker='^', ls=':' ,markersize=10, linewidth=2, markeredgecolor='#ffffff', markeredgewidth=2, alpha=0.5 ,label='최고기온')
 ax1.plot(df.index, df['평균 기온'], color='#ffc6c0', marker='o', ls='-' ,markersize=10, linewidth=3, markeredgecolor='#ffffff', markeredgewidth=2, label='평균기온')
-ax1.plot(df.index, df['최저 기온'], color='#0066cc', marker='v', ls=':' ,markersize=10, linewidth=1, markeredgecolor='#ffffff', markeredgewidth=2, label='최저기온')
+ax1.plot(df.index, df['최저 기온'], color='#0066cc', marker='v', ls=':' ,markersize=10, linewidth=2, markeredgecolor='#ffffff', markeredgewidth=2, alpha=0.5 ,label='최저기온')
 
-ax1.set_ylabel('최고/평균/최저 기온(°C)')
+ax1.set_ylabel('기온(°C)')
 ax1.yaxis.set_label_coords(-0.07, 0.5)
 
 ax1.set_xticklabels(df['일'], ha='center', rotation=0)
