@@ -50,6 +50,9 @@ last_day_of_month = calendar.monthrange(int(year), int(month))[1]
 startDt = year + month + first_day_of_month
 endDt = year + month + str(last_day_of_month)
 
+# startDt='20220601'
+# endDt='20220630'
+
 if startDt > yesterday:
   startDt = first_day
 
