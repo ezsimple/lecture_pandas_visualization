@@ -14,7 +14,7 @@ import matplotlib.transforms as transforms
 
 # 한글화 작업
 plt.figure(dpi=600) # 그래프를 선명하게
-plt.rc('font', family = 'NanumGothic') # 시스템에 폰트설치후, 시스템 재시작
+plt.rc('font', family = ['NanumGothic', 'FontAwesome']) # 시스템에 폰트설치후, 시스템 재시작
 plt.rc('figure', figsize=(10, 6))
 plt.rc('figure', autolayout=True)
 
@@ -66,8 +66,6 @@ if endDt > yesterday:
 url = 'http://apis.data.go.kr/1360000/AsosDalyInfoService/getWthrDataList'
 params ={'serviceKey' : serviceKey, 'pageNo' : pageNo, 'numOfRows' : numOfRows, 'dataType' : 'JSON', 'dataCd' : 'ASOS', 'dateCd' : 'DAY', 'startDt' : startDt, 'endDt' : endDt, 'stnIds' : stnIds  }
 
-# %%
-
 try:
   res = r.get(url, params=params)
   s = res.content.decode('utf-8')
@@ -95,11 +93,8 @@ df['최고 기온'] = df['최고 기온'].astype(float)
 df['최저 기온'] = df['최저 기온'].astype(float)
 df['평균운량'] = df['평균운량'].astype(float)
 
-# %%
-import fontawesome as fa
-
-fa.icons
-# %%
+# import fontawesome as fa
+# fa.icons
 
 def conv_to_cloud_cate(day, cloud_amount, rain_amount):
   if cloud_amount >= 0.0 and cloud_amount < 3.0:
@@ -150,7 +145,6 @@ df.head()
 # for value in min_temps:
 #     temps.drop(temps[temps == value].index, inplace=True)
 
-# %%
 
 mean_temp = df['평균 기온'].mean()
 max_temp = df['평균 기온'].max()
@@ -186,6 +180,7 @@ for idx, val in enumerate(df['평균 기온']):
   if val >= max_temp: #
     ax1.text(idx, val, str(val), ha='center', va='bottom')
 
+
 # 평균 온도를 수평 라인으로 표시
 ax1.axhline(mean_temp, color="red", linestyle=":", linewidth=2, alpha=0.5)
 trans = transforms.blended_transform_factory(ax1.get_yticklabels()[0].get_transform(), ax1.transData)
@@ -202,5 +197,6 @@ for idx, val in enumerate(df['일강수량']):
   if val >= 1.0: # 1mm 이상만 출력
     ax2.text(idx, val+0.05, str(val), ha='center', va='bottom')
 
+ax1.text(34, mean_temp, '\uf185 : 맑음\n\uf185 : 구름조금', bbox={'color': 'white', 'alpha': 0.5, 'pad': 10})
 # 그래프 저장
-fig.savefig('data/'+title+'.png', dpi=300)
+fig.savefig('data/'+title+'.png')
