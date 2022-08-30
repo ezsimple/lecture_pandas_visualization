@@ -15,6 +15,10 @@ import matplotlib.transforms as transforms
 # 한글화 작업
 plt.figure(dpi=600) # 그래프를 선명하게
 plt.rc('font', family = 'NanumGothic') # 시스템에 폰트설치후, 시스템 재시작
+plt.rc('figure', figsize=(10, 6))
+plt.rc('figure', autolayout=True)
+
+
 plt.rc('axes', unicode_minus = False) # 한글 폰트 사용시 마이너스 폰트가 깨지는 문제 해결
 plt.style.use('fivethirtyeight') # 스타일을 사용해 봅니다.
 
@@ -62,6 +66,8 @@ if endDt > yesterday:
 url = 'http://apis.data.go.kr/1360000/AsosDalyInfoService/getWthrDataList'
 params ={'serviceKey' : serviceKey, 'pageNo' : pageNo, 'numOfRows' : numOfRows, 'dataType' : 'JSON', 'dataCd' : 'ASOS', 'dateCd' : 'DAY', 'startDt' : startDt, 'endDt' : endDt, 'stnIds' : stnIds  }
 
+# %%
+
 try:
   res = r.get(url, params=params)
   s = res.content.decode('utf-8')
@@ -77,7 +83,7 @@ except Exception as e:
 # minTa: 최저 기온 , maxTa: 최고 기온 , sumRn: 일강수량
 df = pd.DataFrame(item)
 df.set_index('tm', inplace=True) # tm: 일시
-df.rename(columns={'avgTa':'평균 기온', 'minTa': '최저 기온', 'maxTa': '최고 기온', 'sumRn': '일강수량'}, inplace=True)
+df.rename(columns={'avgTa':'평균 기온', 'minTa': '최저 기온', 'maxTa': '최고 기온', 'sumRn': '일강수량', 'avgTca': '평균운량'}, inplace=True)
 df.index.name = '일자'
 df = df.replace(r'^\s*$', np.nan, regex=True) # 공백제거
 df['일강수량'] = df['일강수량'].fillna(0.0) # 결측치 초기화
@@ -87,12 +93,51 @@ df['일강수량'] = df['일강수량'].astype(float)
 df['평균 기온'] = df['평균 기온'].astype(float)
 df['최고 기온'] = df['최고 기온'].astype(float)
 df['최저 기온'] = df['최저 기온'].astype(float)
+df['평균운량'] = df['평균운량'].astype(float)
+
+# %%
+import fontawesome as fa
+
+fa.icons
+# %%
+
+def conv_to_cloud_cate(day, cloud_amount, rain_amount):
+  if cloud_amount >= 0.0 and cloud_amount < 3.0:
+    cate = u'\uf185' # 맑음
+
+  if cloud_amount >= 3.0 and cloud_amount < 6.0:
+    cate = u'\uf6c4' # 구름조금
+
+  if cloud_amount >= 6.0 and cloud_amount < 9.0:
+    cate = u'\uf0c2' # 구름많음
+
+  if cloud_amount >= 9.0:
+    cate = u'\uf75f' # 흐림
+
+  if rain_amount > 0.0: # 1mm 이상만 출력
+    cate = u'\uf740' # fa-umbrella \uf0e9 \uf740
+
+  return cate + ' ' + str(day).zfill(2)
+
+  # A value is trying to be set on a copy of a slice from a DataFrame
+  # df.iloc[day]['일일운량'] = str(day) + ' ' + cate
+
+  # Try using .loc[row_indexer,col_indexer] = value instead
+  # df[df['일'] == day]['일일운량'] = str(day) + ' ' + cate
+
+  # 두 문제점을 apply(lambda) 로 해결
+
+
 
 # 날짜 추출
 dt = pd.to_datetime(df.index)
 df['년도'] = dt.year
 df['월'] = dt.month
 df['일'] = dt.day
+
+
+df['일일운량'] = df.apply(lambda x : conv_to_cloud_cate(x['일'], x['평균운량'], x['일강수량']), axis=1)
+df.head()
 
 # 중간 10개의 온도 추출
 # all_temps = df['평균 기온'].values.astype(float)
@@ -105,9 +150,13 @@ df['일'] = dt.day
 # for value in min_temps:
 #     temps.drop(temps[temps == value].index, inplace=True)
 
+# %%
+
 mean_temp = df['평균 기온'].mean()
 max_temp = df['평균 기온'].max()
 min_temp = df['평균 기온'].min()
+
+df.head()
 
 # 중간값중 중복값 제거
 # temps = temps.drop_duplicates()
@@ -130,7 +179,8 @@ ax1.plot(df.index, df['최저 기온'], color='#0066cc', marker='v', ls=':' ,mar
 ax1.set_ylabel('기온(°C)')
 ax1.yaxis.set_label_coords(-0.07, 0.5)
 
-ax1.set_xticklabels(df['일'], ha='center', rotation=0)
+fafp = mpl.font_manager.FontProperties(fname=r'/usr/local/share/fonts/Font Awesome 5 Free-Solid-900.otf')
+ax1.set_xticklabels(df['일일운량'], ha='center', rotation=90, fontproperties=fafp)
 ax1.legend(loc=(1.1, 0.80))
 for idx, val in enumerate(df['평균 기온']):
   if val >= max_temp: #
