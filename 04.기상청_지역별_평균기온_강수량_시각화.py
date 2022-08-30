@@ -117,7 +117,7 @@ def conv_to_cloud_cate(day, cloud_amount, rain_amount):
   if rain_amount > 0.0: # 1mm 이상만 출력
     cate = u'\uf740' # fa-umbrella \uf0e9 \uf740
 
-  return cate + '\n' + str(day).zfill(2)
+  return str(day).zfill(2) + '\n' + cate
 
   # A value is trying to be set on a copy of a slice from a DataFrame
   # df.iloc[day]['일일운량'] = str(day) + ' ' + cate
@@ -180,7 +180,7 @@ ax1.set_ylabel('기온(°C)')
 ax1.yaxis.set_label_coords(-0.07, 0.5)
 
 fafp = mpl.font_manager.FontProperties(fname=r'/usr/local/share/fonts/Font Awesome 5 Free-Solid-900.otf')
-ax1.set_xticklabels(df['일일운량'], ha='center', rotation=0, fontproperties=fafp)
+ax1.set_xticklabels(df['일일운량'], ha='center', rotation=0, fontsize=9 ,fontproperties=fafp)
 ax1.legend(loc=(1.1, 0.80))
 for idx, val in enumerate(df['평균 기온']):
   if val >= max_temp: #
